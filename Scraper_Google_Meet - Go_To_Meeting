@@ -1,1 +1,99 @@
+!pip install selenium
+
+import selenium
+from selenium import webdriver
+import pandas as pd
+import sys
+import pprint
+import tqdm
+from tqdm import tqdm
+import time
+
+*********************************************************************************************************************************************************************
+
+#Impostazioni del driver
+sys.path.insert(0,"C:/Users/estra/anaconda3/Scripts/chromedriver.exe" )
+chrome_options=webdriver.ChromeOptions()
+chrome_options.add_argument('--headless')
+chrome_options.add_argument('--no-sandbox')
+chrome_options.add_argument('--disable-dev-shm-usage')
+wd = webdriver.Chrome('chromedriver',options=chrome_options)
+
+
+
+*********************************************************************************************************************************************************************
+
+lista_recensioni = []
+
+for num in tqdm(range(1,383)):#Google Meet
+    #num in tqdm(range(1,311))GoToMeeting
+    ID_user = 0
+    numero = 6
+    
+    wd.get(f'https://www.capterra.it/reviews/176572/google-hangouts?page={num}')#-----Google Meet
+   #wd.get(f'https://www.capterra.it/reviews/163332/gotomeeting?page={num}') ---------GoToMeeting
+    time.sleep(1)
+    for i in range(1,32):
+        try:
+            ID_user = ID_user + 1
+            numero = numero + 1
+        
+            Data_Recensione = wd.find_elements_by_css_selector(" div div div > div > div.col-lg-6.pr-lg-5 > div.d-none.d-lg-block > ul > li:nth-child(2)")[(i-1)].text
+            nome = wd.find_element_by_css_selector(f"body > div.site-main > div:nth-child({numero}) > div > div > div.col-lg-6.pr-lg-5 > div.row.mb-4 > div.col.pl-0 > h5").text
+            lavoro = wd.find_element_by_css_selector(f"body > div.site-main > div:nth-child({numero}) > div > div > div.col-lg-6.pr-lg-5 > div.row.mb-4 > div.col.pl-0 > div:nth-child(2)").text
+            area_lavoro = wd.find_element_by_css_selector(f"body > div.site-main > div:nth-child({numero}) > div > div > div.col-lg-6.pr-lg-5 > div.row.mb-4 > div.col.pl-0 > div.text-italic.text-muted.small").text
+            utilizzo = wd.find_element_by_css_selector(f"body > div.site-main > div:nth-child({numero}) > div > div > div.col-lg-6.pr-lg-5 > div.row.mb-4 > div.col.pl-0 > div.font-weight-light.text-muted.small").text
+            quote = wd.find_element_by_css_selector(f"body > div.site-main > div:nth-child({numero}) > div > div > div.col-lg-6.pl-lg-5 > h3").text
+            commento = wd.find_element_by_css_selector(f"body > div.site-main > div:nth-child({numero}) > div > div > div.col-lg-6.pl-lg-5 > p:nth-child(3) > span").text
+            vantaggi = wd.find_element_by_css_selector(f"body > div.site-main > div:nth-child({numero}) > div > div > div.col-lg-6.pl-lg-5 > p:nth-child(4) > span").text
+            svantaggi = wd.find_element_by_css_selector(f"body > div.site-main > div:nth-child({numero}) > div > div > div.col-lg-6.pl-lg-5 > p:nth-child(5) > span").text
+            valutazione_complessiva = wd.find_element_by_css_selector(f"body > div.site-main > div:nth-child({numero}) > div > div > div.col-lg-6.pr-lg-5 > div.pb-2.py-md-4.mb-4 > ul > li.py-2.row.font-weight-bold > div.col.text-right > span > span.text-nowrap.d-inline-block.text-right.review-stars__text.font-weight-bold").text
+            facilita_uso = wd.find_element_by_css_selector(f"body > div.site-main > div:nth-child({numero}) > div > div > div.col-lg-6.pr-lg-5 > div.pb-2.py-md-4.mb-4 > ul > li:nth-child(2) > div.col.text-right > span > span.text-nowrap.d-inline-block.text-right.review-stars__text.font-weight-bold").text
+            caratteristiche = wd.find_element_by_css_selector(f"body > div.site-main > div:nth-child({numero}) > div > div > div.col-lg-6.pr-lg-5 > div.pb-2.py-md-4.mb-4 > ul > li:nth-child(2) > div.col.text-right > span > span.text-nowrap.d-inline-block.text-right.review-stars__text.font-weight-bold").text
+            assistenza_clienti = wd.find_element_by_css_selector(f"body > div.site-main > div:nth-child({numero}) > div > div > div.col-lg-6.pr-lg-5 > div.pb-2.py-md-4.mb-4 > ul > li:nth-child(4) > div.col.text-right > span").text
+            qualita_prezzo = wd.find_element_by_css_selector(f"body > div.site-main > div:nth-child({numero}) > div > div > div.col-lg-6.pr-lg-5 > div.pb-2.py-md-4.mb-4 > ul > li:nth-child(5) > div.col.text-right > span > span.text-nowrap.d-inline-block.text-right.review-stars__text.font-weight-bold").text
+            consigliato = wd.find_element_by_css_selector(f"body > div.site-main > div:nth-child({numero}) > div > div > div.col-lg-6.pr-lg-5 > div.pb-2.py-md-4.mb-4 > ul > li:nth-child(6) > div.col.text-right > div > div.text-nowrap.d-inline-block.text-right.review-bar__text").text
+            schede = wd.find_element_by_css_selector(f"body > div.site-main > div:nth-child({numero}) > div").text
+               
+        
+            lista_recensioni.append({'schede': schede,
+                                  'Data_Recensione': Data_Recensione,
+                                  'lavoro': lavoro,
+                                  'area_lavoro': area_lavoro,
+                                  'utilizzo': utilizzo,
+                                  'quote': quote,
+                                  'commento': commento,
+                                  'vantaggi': vantaggi,
+                                  'svantaggi': svantaggi,
+                                  'valutazione_complessiva': valutazione_complessiva,
+                                  'facilita_uso': facilita_uso,
+                                  'caratteristiche': caratteristiche,
+                                  'assistenza_clienti': assistenza_clienti,
+                                  'qualita_prezzo': qualita_prezzo,
+                                  'consigliato': consigliato})
+        except:
+            pass
+            
+            
+            
+            
+ *********************************************************************************************************************************************************************          
+            
+            
+import pprint
+pprint.pprint(lista_recensioni)
+
+
+*********************************************************************************************************************************************************************
+
+
+import pandas as pd
+dataset = pd.DataFrame(lista_recensioni)
+dataset.head()
+
+
+
+
+ds = dataset.to_csv("D:/Google_Meet_Data.csv")
+               
 
